@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class TransferModel extends BaseModel {
+class TransferModel extends BaseModel implements TransferContract {
     
     /**
     *

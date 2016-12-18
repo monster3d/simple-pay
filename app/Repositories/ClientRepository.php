@@ -12,9 +12,9 @@ class ClientRepository {
     *
     * Add client to database
     *
-    * @param $model 
+    * @param $model App/Models/ClientContract
     *
-    * @return same
+    * @return App/Models/ClientContract
     *
     */
     public function add($model) 
@@ -54,9 +54,9 @@ class ClientRepository {
     *
     * Get client infoermation bey uid
     *
-    * @param $model 
+    * @param $model App/Models/ClientContract
     *
-    * @return any
+    * @return App/Models/ClientContract
     *
     */
     public function get($model)
@@ -90,9 +90,9 @@ class ClientRepository {
     *
     * Fill up client purse
     *
-    * @param $model
+    * @param $model App/Models/ClientContract
     *
-    * @return any
+    * @return App/Models/ClientContract
     *
     */
     public function fillUp($model)

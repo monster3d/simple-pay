@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 
-class ClientModel extends BaseModel {
+class ClientModel extends BaseModel implements ClientContract {
     
     /**
     *
