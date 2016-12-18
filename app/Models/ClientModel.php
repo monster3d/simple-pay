@@ -223,7 +223,7 @@ class ClientModel {
     * @return self
     *
     */
-    public function setCity()
+    public function setCity($city)
     {
         $this->city = (string)$city;
         return $this;
@@ -241,6 +241,7 @@ class ClientModel {
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+        return $this;
     }
 
     /**
@@ -271,6 +272,21 @@ class ClientModel {
     {
         $this->lastActivity = (string)$activity;
         return $this; 
+    }
+
+    /**
+    *
+    * Set client amount
+    *
+    * @param $amount int
+    *
+    * @return self
+    *
+    */
+    public function setAmount($amount)
+    {
+        $this->amount = (int)$amount;
+        return $this;
     }
 
     /**
