@@ -49,6 +49,15 @@ class ClientRepository {
         return $model;
     }
 
+    /**
+    *
+    * Get client infoermation bey uid
+    *
+    * @param $model 
+    *
+    * @return any
+    *
+    */
     public function get($model)
     {
         $pdo = DB::getPdo();
