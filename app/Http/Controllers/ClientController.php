@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ClientModel;
 use App\Repositories\ClientRepository;
+use \Exception;
 
 class ClientController extends Controller
 {
@@ -94,5 +95,34 @@ class ClientController extends Controller
             ]
         ];
         return response()->json($response, 200);
+    }
+
+    /**
+    *
+    * Fill Up client purse
+    *
+    * @param $request Illuminate\Http\Request 
+    *
+    * @return array
+    *
+    */
+    public function fillUpAmount(Request $request)
+    {
+        $clientModel = new ClientModel($request->all());
+        $clientRepository = new ClientRepository();
+        $response = [
+            'status' => 0
+        ];
+
+        try {
+            $clientRepository->fillUp($clientModel);
+        } catch (PDOException $e) {
+            //@todo logger
+        } catch (Exception $e) {
+            //@todo logger
+            $response['status'] = -1;
+        }
+        return response()->json($response, 201);
+    
     }
 }
