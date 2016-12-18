@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\ClientModel;
+use App\Repositories\ClientRepository;
+
 class ClientController extends Controller
 {
     /**
@@ -26,13 +29,12 @@ class ClientController extends Controller
     public function add(Request $request)
     {
 
-        $client = new ClientModel();
+        $clientModel      = new ClientModel($request->all());
+        $clientRepository = new ClientRepository();
+        $clientModel      = $clientRepository->add($clientModel);
 
-        $baseClientStruct = [];
-        
-        $baseClientStruct = $request->input();
 
-        return $baseClientStruct;
+        return response()->json(['status' => 0, 'uid' => $clientModel->getUid()], 201);
 
     }
 
