@@ -7,11 +7,21 @@ use \PDO;
 
 class ClientRepository {
 
+    /**
+    *
+    * Add client to database
+    *
+    * @param $model 
+    *
+    * @return same
+    *
+    */
     public function add($model) 
     {
         $pdo    = DB::getPdo();
         $status = null;
         $uid    = null; 
+        $result = false;
         
         $sql = "CALL client_add(:name, :country, :city, :currency, :uid, :_status)";
         $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
@@ -39,5 +49,30 @@ class ClientRepository {
         return $model;
     }
 
+    public function get($model)
+    {
+        $pdo = DB::getPdo();
 
+        $uid = $model->getUid();
+
+        $sql = "SELECT `clients`.`id`, `clients`.`name`, `clients`.`country`, 
+                `clients`.`city`, `clients`.`active_at`, `wallets`.`amount`, `currencys`.`alias` 
+                FROM `clients`
+	            LEFT JOIN `wallets` ON `client_id` = `clients`.`id`
+	            LEFT JOIN `currencys` ON `currencys`.`id` = `wallets`.`currency_id`
+	            WHERE `uid` = :uid LIMIT 1";
+
+        $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true]);
+        $stmt->bindParam(':uid', $uid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result === false) {
+            throw new Exception(sprintf('Client not found, uid: %d', $uid));
+        }
+        $model->setName($result['name'])->setCountry($result['country'])->setCity($result['city'])
+              ->setCurrency($result['alias'])->setAmount($result['amount'])->setActivity($result['active_at']);
+        
+        return $model;
+    }
 }
