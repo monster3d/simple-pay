@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 
-class ClientModel {
+class ClientModel extends BaseModel {
     
     /**
     *
@@ -81,11 +81,12 @@ class ClientModel {
     public function __construct($data = null)
     {
         if ($data !== null) {
-            $this->name     = (string)$this->getValue($data, 'name', '', true);
-            $this->country  = (string)$this->getValue($data, 'country', '', true);
-            $this->city     = (string)$this->getValue($data, 'city', '', true);
-            $this->currency = (string)$this->getValue($data, 'currency', '', true);
+            $this->name     = (string)$this->getValue($data, 'name', '');
+            $this->country  = (string)$this->getValue($data, 'country', '');
+            $this->city     = (string)$this->getValue($data, 'city', '');
+            $this->currency = (string)$this->getValue($data, 'currency', '');
             $this->passHash = (string)$this->getValue($data, 'pass_hash', '');
+            $this->amount   = (int)$this->getValue($data, 'amount', 0);
             $this->uid      = (int)$this->getValue($data, 'uid', 0);
         }
     }
@@ -313,30 +314,5 @@ class ClientModel {
         return true;
     }
 
-    /**
-    *
-    * Get array value
-    *
-    * @param $array array
-    * @param $key string
-    * @param $default mixed
-    * @param $strict bool
-    *
-    * @return mixed
-    *
-    */
-    public function getValue($array, $key, $default, $strict = false)
-    {
-        $result = null;
-
-        if (array_key_exists($key, $array)) {
-            $result = $array[$key];
-        } else {
-            if ($strict === true) {
-                throw new Exception('Value not found');
-            }
-            $result = $default;
-        }
-        return $result;
-    }
+    
 }
