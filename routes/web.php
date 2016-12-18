@@ -21,6 +21,16 @@ $app->group(['prefix' => 'api'], function() use($app) {
     * Route get client info by uid
     */
     $app->get('client/info/uid/{uid}', 'ClientController@info');
+
+    /*
+    * Route fill up client amount
+    */
+    $app->post('client/fillup', 'ClientController@fillUpAmount');
+
+    /*
+    * Route fro transfer
+    */
+    $app->post('transfer', 'TransferController@transfer');
 });
 
 
