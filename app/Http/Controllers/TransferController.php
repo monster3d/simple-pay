@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\TransferModel;
+use App\Repositories\TransferRepository;
+use \Exception;
+
+class TransferController extends Controller
+{
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        // void
+    }
+
+    public function transfer(Request $request)
+    {
+        $response = [
+            'status' => 0
+        ];
+        $transferModel = new TransferModel($request->all());
+        $transferRepository = new TransferRepository();
+        try {
+            $transferRepository->clientToClient($transferModel);
+        } catch (PDOException $e) {
+            //@todo logger
+        } catch (Exception $e) {
+            //@tddo logger
+            $response['status'] = -1;
+        }
+        return response()->json($response, 200);
+    }
+
+}
