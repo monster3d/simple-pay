@@ -6,7 +6,7 @@
 |--------------------------------------------------------------------------
 */
 
-$app->get('/', function () use ($app) {
+$app->get('/version', function () use ($app) {
     return $app->version();
 });
 
@@ -34,6 +34,6 @@ $app->group(['prefix' => 'api'], function() use($app) {
 });
 
 
-
-
-#$app->get('test/{id}', 'ExampleController@show');
+$app->group(['prefix' => 'report'], function() use($app) {
+    $app->get('/', 'ReportController@report');
+});
