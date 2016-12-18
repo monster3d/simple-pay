@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
 use \PDO;
+use \Exception;
 
 class ClientRepository {
 
@@ -80,8 +81,40 @@ class ClientRepository {
             throw new Exception(sprintf('Client not found, uid: %d', $uid));
         }
         $model->setName($result['name'])->setCountry($result['country'])->setCity($result['city'])
-              ->setCurrency($result['alias'])->setAmount($result['amount'])->setActivity($result['active_at']);
+              ->setCurrency($result['alias'])->setAmount($model->toBigAmount($result['amount']))->setActivity($result['active_at']);
         
         return $model;
+    }
+
+    /**
+    *
+    * Fill up client purse
+    *
+    * @param $model
+    *
+    * @return any
+    *
+    */
+    public function fillUp($model)
+    {
+        $pdo = DB::getPdo();
+
+        $status = null;
+        $uid = $model->getUid();
+        $amount = $model->toSmallAmount($model->getAmount());
+
+        $sql = "CALL fill_up(:uid, :amount, :_status)";
+        $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
+        
+        $stmt->bindParam(':uid', $uid, PDO::PARAM_INT);
+        $stmt->bindParam(':amount', $amount, PDO::PARAM_INT);
+        $stmt->bindParam(':_status', $status, PDO::PARAM_INT|PDO::PARAM_INPUT_OUTPUT, 4000);
+        $stmt->execute();
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result === false) {
+            throw new Exception(sprintf('It is impossible to fill up the purse UID: %d', $uid));
+        }
+        return $model; 
     }
 }
