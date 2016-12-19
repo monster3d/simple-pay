@@ -19,12 +19,17 @@ class StoredProcedure extends AbstractMigration
                         DECLARE new_uid INT;
                         DECLARE client_uid INT;
                         DECLARE _status INT;
+                        DECLARE temp_currency_id INT DEFAULT 0;
                         SET _status = -1;
     
                     START TRANSACTION;
-    	                INSERT INTO `currencys` (`alias`) VALUES(client_currency);
-    	                SET last_id_currency = LAST_INSERT_ID();
-    	
+                        SELECT `id` INTO temp_currency_id FROM `currencys` WHERE `alias` LIKE CONCAT('%', client_currency , '%') LIMIT 1; 
+
+                        IF temp_currency_id = 0 THEN 
+                            INSERT INTO `currencys` (`alias`) VALUES(client_currency);
+         	                SET last_id_currency = LAST_INSERT_ID();
+                        ELSE SET last_id_currency = temp_currency_id;
+                        END IF;
                         SELECT ROUND((RAND() * (999999999-111111111))+111111111) INTO new_uid;
     	
                         INSERT INTO `clients` (`uid`, `name`, `country`, `city`)
