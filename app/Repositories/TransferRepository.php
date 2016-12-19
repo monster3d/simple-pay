@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
+use App\Models\TransferContract;
 use \PDO;
 use \Exception;
 
@@ -15,7 +16,7 @@ class TransferRepository {
     * @param 
     *
     */
-    public function clientToClient($model)
+    public function clientToClient(TransferContract $model)
     {
         $pdo = DB::getPdo();
         $status  = null;
