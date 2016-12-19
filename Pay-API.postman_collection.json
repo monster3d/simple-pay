@@ -1,0 +1,230 @@
+{
+	"id": "aee59795-9b12-b60b-6a91-a56e646cb32d",
+	"name": "Pay-API",
+	"description": "",
+	"order": [
+		"1db71acd-a510-b0fc-3d61-1b50261cb5c0",
+		"27c85cd0-ce10-27bc-bf62-e16f85b4d2fb",
+		"6b7c32e1-7fdb-c57b-3765-ddb807185476",
+		"5d503278-b316-dc01-f458-c2a7030ebae1",
+		"f7e9cd7c-c5dc-fbeb-9dd1-fba49fa2d393",
+		"634c537d-054e-18ac-8857-de9a6be9317b",
+		"fc2ba995-91a9-25d3-eb4f-21463b56ee82"
+	],
+	"folders": [],
+	"timestamp": 1481975290502,
+	"owner": "67967",
+	"public": false,
+	"requests": [
+		{
+			"id": "1db71acd-a510-b0fc-3d61-1b50261cb5c0",
+			"headers": "",
+			"url": "{{url}}/api/client/add",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "aee59795-9b12-b60b-6a91-a56e646cb32d",
+			"data": [
+				{
+					"key": "name",
+					"value": "Niko",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "country",
+					"value": "Russia",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "city",
+					"value": "Moskow",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "currency",
+					"value": "Rub",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Client Add",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1481991409605,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "27c85cd0-ce10-27bc-bf62-e16f85b4d2fb",
+			"headers": "",
+			"url": "{{url}}/api/client/info/uid/401670865",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1482059176078,
+			"name": "Get client info by uid",
+			"description": "",
+			"collectionId": "aee59795-9b12-b60b-6a91-a56e646cb32d",
+			"responses": []
+		},
+		{
+			"id": "5d503278-b316-dc01-f458-c2a7030ebae1",
+			"headers": "",
+			"url": "{{url}}/api/transfer",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "aee59795-9b12-b60b-6a91-a56e646cb32d",
+			"data": [
+				{
+					"key": "from_uid",
+					"value": "401670865",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "to_uid",
+					"value": "835775067",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "sum",
+					"value": "5",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Transfer money client to client",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1482078011458,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "634c537d-054e-18ac-8857-de9a6be9317b",
+			"headers": "",
+			"url": "{{url}}/report/client/name/Nikolay",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "aee59795-9b12-b60b-6a91-a56e646cb32d",
+			"data": null,
+			"dataMode": "params",
+			"name": "Report by name ",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1482119715593,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "6b7c32e1-7fdb-c57b-3765-ddb807185476",
+			"headers": "",
+			"url": "{{url}}/api/client/fillup",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "aee59795-9b12-b60b-6a91-a56e646cb32d",
+			"data": [
+				{
+					"key": "uid",
+					"value": "429357148",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "amount",
+					"value": "22",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "fill up purse",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1482075343723,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "f7e9cd7c-c5dc-fbeb-9dd1-fba49fa2d393",
+			"headers": "",
+			"url": "{{url}}/report/all",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1482143116553,
+			"name": "All Reports",
+			"description": "",
+			"collectionId": "aee59795-9b12-b60b-6a91-a56e646cb32d",
+			"responses": []
+		},
+		{
+			"id": "fc2ba995-91a9-25d3-eb4f-21463b56ee82",
+			"headers": "",
+			"url": "{{url}}/api/rate/usd/add",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "currency",
+					"value": "UZB",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "value",
+					"value": "6700",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "date",
+					"value": "2016-12-19",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1482153059207,
+			"name": "Rate add to 1 USD",
+			"description": "",
+			"collectionId": "aee59795-9b12-b60b-6a91-a56e646cb32d",
+			"responses": []
+		}
+	]
+}
