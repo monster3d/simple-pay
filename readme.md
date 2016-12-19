@@ -182,7 +182,7 @@ environments:
 И тогда будет полноценное приложение.
 
 Создание пользователя POST
-    ```sh
+```sh
         http://localhost:8000/api/client/add
 
         post data:
@@ -201,10 +201,10 @@ environments:
             {
                 "status": -1 // Ошибка
             }
-    ```
+```
 
 Получение информации о клиенте GET
-    ```sh
+```sh
         http://localhost:8000/api/client/info/uid/890540993
 
         success:
@@ -227,10 +227,10 @@ environments:
                 "status": -1
             }
     
-    ```
+```
 
 Пополнение счета клиента POST (лучше сделать PUT и реализовать возможность пополнения в разной валюте)
-    ```sh
+```sh
         http://localhost:8000/api/client/fillup
 
         post data:
@@ -246,10 +246,10 @@ environments:
             {
                 "status": -1
             }
-    ```
+```
 
 Перевод денег от одного пользователя к другому POST
-    ```sh
+```sh
         http://localhost:8000/api/transfer
 
         post data:
@@ -266,10 +266,10 @@ environments:
             {
                 "status": -1
             }
-    ```
+```
 
 Загрузка котировок POST (Котировка в местной валюте всегда равняется 1 USD)
-    ```sh
+```sh
         http://localhost:8000/api/rate/usd/add
 
             post data:
@@ -286,9 +286,10 @@ environments:
                 {
                     "status": -1
                 }
+```
 
 Получение отчета за все операции по всем клиентам за весь период GET
-    ```sh
+```sh
         http://localhost:8000/report/all
 
             success:
@@ -296,10 +297,10 @@ environments:
 
             error:
                 http status code
-    ```
+```
 
 Получение отчета по имени клиента (дата от и до необязательные параметры) GET
-    ```sh
+```sh
         http://localhost:8000/report/client/name/Nikolay/from/2016-12-01/to/2016-11-01
 
         success:
@@ -307,4 +308,4 @@ environments:
 
         error:
             http status code
-    ```
+```
