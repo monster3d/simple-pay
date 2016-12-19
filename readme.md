@@ -1,21 +1,310 @@
-# Lumen PHP Framework
+# Simple pay api
+Тестовое задание
+Микроплатежная система.
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/lumen-framework/v/unstable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+Связка:
+php + lumen + mysql
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+Почему lumen:
+* [Lumen] - микро-фреамворк от команды Laravel: https://lumen.laravel.com/ 
+Люмен очень маленький микро-фреамворк, по статистике на офф сайте самый быстрый из своих соотечественников Slim, Silex и тп.
 
-## Official Documentation
+Плюсы:
+- Очень простой, легко осваевается.
+- Быстрый.
+- Нет ничего кроме базового функционала (Чем меньше магии происходит внутри, тем лучше).
+- Высокая совместимость с модулями от Laravel.
 
-Documentation for the framework can be found on the [Lumen website](http://lumen.laravel.com/docs).
+Минусы:
+- Нужно все делать самому (тут кому как).
+- Чтоб описывать логику роутеров в отдельных файлах нужно переделывать базовый функционал.
+- Не полная совместимость с модулями Laravel
 
-## Security Vulnerabilities
+Бизнес логика.
+От фреамворка взят только базовый функционал, то есть маршруты, парсинг запросов, вывод ответа.
+Все остальное написано с нуля. (Меньше магии, больше скорости).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+В качестве типа хранения денежных единиц выбран INT, почему?
+- Проще хранить, занимает всего 4 байта. 
+- Легко считать. 
+- Не обрезает.
+- Меньше неточности. 
+- Проще проводить математические операции. 
+- INT считать быстрее.
+- Роберт Мартин: «Использовать числа с плавающей точкой для представления денежных сумм — почти преступление»  
 
-## License
+Вся логика для работы с денежными единицами инкапсулирована в MySQL (Хранимые процедуры и функции)
 
-The Lumen framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+Плюсы такого способа:
+- Процедуры очень быстрые.
+- Снимает нагрузку c синхронного php (c его аппетитом это необходимо)
+- Скрывают логику работы от глаз. (выгодно когда одной базой пользуются несколько API - разных команд программистов).
+- Позволяет управлять правами на выполнение процедурами для определенного пользователя (Можно дать, забрать или ограничить права 
+на использование процедур).
+- Меньше потери (особенно когда база работает на удаленном сервере, не хорошо держать долгие транзакции, блокировки или
+ждать пока будет забит пулл коннектов)
+
+Минусы:
+- Процедуры очень прожорлевы (поедают ресурсы процессора, в не умелых руках можно отстрелить ногу).
+- Декларативный язык SQL очень бедный (сложно проектировать сложные итерации)
+- Сложно отлаживать.
+- Сложно вносить патчи в миграции.
+
+В приложении не используется ORM, было решенно использовать Pure SQL.
+Почему?
+
+Плюсы:
+- Запросы сырцы sql выполняются быстрее.
+- Меньше магии, которая происходит в ORM.
+- Позволяет проектировать и использовать запросы любой сложности.
+- Чем ниже уровень, тем легче держать контроль.
+
+Минусы:
+- Нужно тратить больше времени на написание и оптимизацию запросов.
+- Лишает возможности сменить базу данных безболезненно.
+
+Для миграций используется Phinx.
+Почему Phinx?
+Тут уже наверное больше личное предпочтение. Phinx зарекомендовал себя и успешно выполнял свою работу на больших базах в продакшен.
+
+Плюсы:
+- Легкий.
+- Легко использовать.
+- Хорошо справляется со сложными структурами таблиц.
+- Хорошо работает с сырцами.
+
+Минус:
+- Неудобно реализованны сиды.
+
+Как запусить:
+
+Склонировать репозиторий
+```sh
+    $ git cline https://github.com/monster3d/simple-pay.git
+```
+
+Перейти в папку приложение
+```sh
+    $ cd simple-pay
+```
+
+Запустить установку зависимостей через composer https://getcomposer.org/
+```sh
+    $ php composer.phar install
+```
+Или 
+```sh
+    $ php composer.phar update
+```
+
+После надо скопировать конфиг
+```sh
+    $ mv .env.example .env
+```
+Внести в него данные для подключения базы данных (хост, логин, пароль, название базы)
+
+Надеюсь база данных уже создана)
+
+Теперь настроем Phinx.
+```sh
+    $ vendor/bin/phinx init
+```
+
+Готово, теперь надо добавить подключение к базе данных в phinx.yml в раздел develompent
+Должен быть примерно таким.
+```sh
+~
+
+environments:
+    default_migration_table: phinxlog
+    default_database: development
+    production:
+        adapter: mysql
+        host: 127.0.0.1
+        name: basename
+        user: root
+        pass: '123456'
+        port: 3306
+        charset: utf8
+
+~
+```
+Проверим.
+```sh
+    $ vendor/bin/phinx status -e develompent
+```
+Если все нормально, то должны увидить что статусы всех миграций down
+
+Ну, запустим миграции.
+```sh
+    $ vendor/bin/phinx migrate -e development
+```
+Если ничего по дороге не сломалось, значит круто, продолжаем.
+Теперь попробуем запустить приложение.
+```sh
+    $ php -S localhost:8000 -t public
+```
+
+Теперь надо создать хоть одного пользователя.
+
+Документация:
+Для запросов используется стандарт REST
+Для ответа JSON 
+Почему JSON? Так вышло, что планировалось фронт делать отдельный на js + html, но после было понятно, 
+что это будет требовать много времени. По антропологическим причинам остался JSON.
+
+Что сделано сейчас:
+- Добавление клиента.
+- Получение информации о клиенте.
+- Пополнение счета клиента.
+- Перевод денюшек от одного пользователя к другому.
+- Логирование любой операции с кошельком клиента.
+- Загрузка курса на указанную дату USD к валюте, которая есть в базе.
+- Просмотр страницы отчета (за все периуды, для всех пользователей по всем операциям).
+- Просмотр страницы отчета (по имени клиента).
+- Просмотр страницы отчета (по имени и даты от).
+- Просмотр старницы отчета (по имени и даты до).
+- Просмотр старницы отчета (по имени и даты от и до).
+- В отчете сразу выводится сумма по курсу к USD (если он был добавлен для энной валюты).
+
+Что не успел сделать:
+- Выгрузка отчета в XML
+- Фронтэнд (кроме отчета страниц больше нету)
+- Тесты (не законченны).
+
+Чего не хватает:
+- Логирования.
+- Более подробной картины статусов ошибок.   
+- Редакирования клиента.
+- Удаление клиента.
+- Добовление более одного счета (архитектура позваляет)
+- Фронтенд.
+И тогда будет полноценное приложение.
+
+Создание пользователя POST
+    ```sh
+        http://localhost:8000/api/client/add
+
+        post data:
+            name     = Joni, // Имя  
+            country  = Russia // Страна
+            city     = Moscow // Город
+            currency = RUB // Валюта
+
+        success:
+            {
+                "status": 0, // Успешный статус
+                "uid": 890540993 // Личный кашелек клиента
+            }
+        
+        error:
+            {
+                "status": -1 // Ошибка
+            }
+    ```
+
+Получение информации о клиенте GET
+    ```sh
+        http://localhost:8000/api/client/info/uid/890540993
+
+        success:
+            {
+                "status": 0,
+                "data": {
+                    "client": {
+                        "name": "Nikolay", // Имя
+                        "country": "Uzbekistan", // Страна
+                        "city": "Chirchick", // Город
+                        "currency": "UZB", // Валюта
+                        "amount": 0, // Количество денег
+                        "last_active": "2016-12-19 09:58:26" // Дата последний активности
+                        }
+                  }
+            }
+
+        error:
+            {
+                "status": -1
+            }
+    
+    ```
+
+Пополнение счета клиента POST (лучше сделать PUT и реализовать возможность пополнения в разной валюте)
+    ```sh
+        http://localhost:8000/api/client/fillup
+
+        post data:
+            uid    = 548088154 // Уникальный счет клиента
+            amount = 500 // Сумма
+
+        success:
+            {
+                "status": 0
+            }
+
+        error:
+            {
+                "status": -1
+            }
+    ```
+
+Перевод денег от одного пользователя к другому POST
+    ```sh
+        http://localhost:8000/api/transfer
+
+        post data:
+            from_uid = 548088154 // Счет клиента
+            to_uid   = 890540993 // Счет клиента
+            sum      = 500 // Сумма
+        
+        success:
+            {
+                "status": 0
+            }
+        
+        error:
+            {
+                "status": -1
+            }
+    ```
+
+Загрузка котировок POST (Котировка в местной валюте всегда равняется 1 USD)
+    ```sh
+        http://localhost:8000/api/rate/usd/add
+
+            post data:
+                currency = UZB // Валюта
+                value    = 6800 // Сколько стоит 1 USD в указанной валюте
+                data     = 2016-12-19 // На какую дату актуальна котировка
+
+            success:
+                {
+                    "status": 0
+                }
+
+            error:
+                {
+                    "status": -1
+                }
+
+Получение отчета за все операции по всем клиентам за весь период GET
+    ```sh
+        http://localhost:8000/report/all
+
+            success:
+                html viewe
+
+            error:
+                http status code
+    ```
+
+Получение отчета по имени клиента (дата от и до необязательные параметры) GET
+    ```sh
+        http://localhost:8000/report/client/name/Nikolay/from/2016-12-01/to/2016-11-01
+
+        success:
+            html viewe
+
+        error:
+            http status code
+    ```
