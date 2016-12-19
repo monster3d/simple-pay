@@ -29,7 +29,7 @@ class RateRepository {
                  VALUES ((
                      SELECT `id` 
                      FROM `currencys`
-                     WHERE `alias` = :currency_alias
+                     WHERE `alias` = :currency_alias LIMIT 1
                      ), :rate_value, :rate_date)";
 
          $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true]);
