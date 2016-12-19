@@ -184,6 +184,8 @@ environments:
 - Фронтенд.
 И тогда будет полноценное приложение.
 
+Для Google App Postman в корне проекта есть файл Pay-API.postman_collection.json мржно его импортировать, там есть все запросы из документации. 
+
 Создание пользователя POST
 ```sh
         http://localhost:8000/api/client/add
