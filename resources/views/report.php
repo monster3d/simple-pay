@@ -37,7 +37,7 @@ text-align: center;
 
 tr:nth-child(even) td { background: #F1F1F1; }
 tr:nth-child(odd) td { background: #FEFEFE; }
-tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
+tr td:hover { background: #666; color: #FFF; }
 </style>
 
     <body>
@@ -50,13 +50,14 @@ tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
                 <td class="title">Actions</td>
                 <td class="title">Value</td>
                 <td class="title">Date Actions</td>
+                <td class="title">USD</td>
             </tr>
             <?php
                 foreach($data as $client) {
                     echo "<tr>";
                         foreach($client as $value) {
                             echo "<td>";
-                            echo $value;    
+                            echo  empty($value) ? 'None' : $value;    
                             echo "</td>";
                       
                         }
@@ -65,11 +66,15 @@ tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
                ?>
                <tr>
                    <td class="title align">Total addition: </td>
-                   <td> <?php echo $addition; ?></td>
+                   <td> <?php echo $total['addition']; ?></td>
+                   <td class="title align">USD</td>
+                   <td> <?php echo $total['curs_addition']; ?></td>
                </tr>
                <tr>
                     <td class="title align">Total subtraction: </td>
-                    <td> <?php echo $subtraction; ?></td>
+                    <td> <?php echo $total['subtraction']; ?></td>
+                    <td class=" title align">USD</td>
+                    <td> <?php echo $total['curs_subtraction']; ?></td> 
                </tr>
         </table>
     </body>
