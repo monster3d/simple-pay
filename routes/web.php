@@ -35,5 +35,29 @@ $app->group(['prefix' => 'api'], function() use($app) {
 
 
 $app->group(['prefix' => 'report'], function() use($app) {
-    $app->get('/', 'ReportController@report');
+    
+    /*
+    * Route get all reports 
+    */
+    $app->get('all', 'ReportController@report');
+
+    /*
+    * Route get report by client name
+    */
+    $app->get('client/name/{name}', 'ReportController@reportByName');
+
+    /*
+    * Route get report by data from
+    */
+    $app->get('client/name/{name}/from/{fromData}', 'ReportController@reportByDataFrom');
+
+    /*
+    * Route get report by data to
+    */
+    $app->get('client/name/{name}/to/{toDate}', 'ReportController@reportByDataTo');
+
+    /*
+    * Route get report by between data
+    */
+    $app->get('client/name/{name}/from/{fromData}/to/{toData}', 'ReportController@reportByBetweenData');
 });
