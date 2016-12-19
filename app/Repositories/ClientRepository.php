@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\ClientContarct;
+use App\Models\ClientContract;
 use \PDO;
 use \Exception;
 
@@ -18,14 +18,14 @@ class ClientRepository {
     * @return App/Models/ClientContract
     *
     */
-    public function add(ClientContarct $model) 
+    public function add(ClientContract $model) 
     {
         $pdo    = DB::getPdo();
         $status = null;
         $uid    = null; 
         $result = false;
         
-        $sql = "CALL client_add(:name, :country, :city, :currency, :uid, :_status)";
+        $sql = "CALL client_add(:client_name, :client_country, :client_city, :client_currency)";
         $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
 
         $name     = $model->getName();
@@ -33,12 +33,10 @@ class ClientRepository {
         $city     = $model->getCity();
         $currency = $model->getCurrency();
         
-        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-        $stmt->bindParam(':country', $country, PDO::PARAM_STR);
-        $stmt->bindParam(':city', $city, PDO::PARAM_STR);
-        $stmt->bindParam(':currency', $currency, PDO::PARAM_STR);
-        $stmt->bindParam(':uid', $uid, PDO::PARAM_INT|PDO::PARAM_INPUT_OUTPUT, 4000);
-        $stmt->bindParam(':_status', $status, PDO::PARAM_INT|PDO::PARAM_INPUT_OUTPUT, 4000);
+        $stmt->bindParam(':client_name', $name, PDO::PARAM_STR);
+        $stmt->bindParam(':client_country', $country, PDO::PARAM_STR);
+        $stmt->bindParam(':client_city', $city, PDO::PARAM_STR);
+        $stmt->bindParam(':client_currency', $currency, PDO::PARAM_STR);
         $stmt->execute();
         
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -47,7 +45,7 @@ class ClientRepository {
             throw new Exception('Сould not create a client');
         }
 
-        $model->setUid($result['uid']);
+        $model->setUid($result['client_uid']);
         return $model;
     }
 
@@ -104,12 +102,11 @@ class ClientRepository {
         $uid = $model->getUid();
         $amount = $model->toSmallAmount($model->getAmount());
 
-        $sql = "CALL fill_up(:uid, :amount, :_status)";
+        $sql = "CALL fill_up(:uid, :amount)";
         $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
         
         $stmt->bindParam(':uid', $uid, PDO::PARAM_INT);
         $stmt->bindParam(':amount', $amount, PDO::PARAM_INT);
-        $stmt->bindParam(':_status', $status, PDO::PARAM_INT|PDO::PARAM_INPUT_OUTPUT, 4000);
         $stmt->execute();
         
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
