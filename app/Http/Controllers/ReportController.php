@@ -17,42 +17,161 @@ class ReportController extends Controller
         //void
     }
 
-    public function report(Request $request, $uid = null, $fromData = null, $toData = null)
+    /**
+    *
+    * Get all reports for all clients 
+    *
+    * @param $request Illuminate\Http\Request
+    *
+    * @return array
+    *
+    */
+    public function report(Request $request)
     {
-
-        $fromData = $this->getDateFormat($fromData, '1990-01-01 00:00:00');
-        $toData   = $this->getDateFormat($toData, '2099-01-01 00:00:00');
-
-        $totalSubtraction = [];
-        $totalAddition    = []; 
         $reportRepository = new ReportRepository();
-        $result = $reportRepository->report($fromData, $toData);
-        foreach ($result as $value) {
-            if ($value['alias'] === 'addition') {
-                array_unshift($totalAddition, $value['value']);
-            }
-            if ($value['alias'] === 'subtraction') {
-                array_unshift($totalSubtraction, $value['value']);
-            }
+        
+        try {
+            $result = $reportRepository->all();
+        } catch (PDOException $e) {
+            //@todo logger
+        } catch (Exception $e) {
+            //@todo logger
         }
+
+        $total = $this->getTotalActions($result); 
+        
         return view('report', [
-            'data' => $result, 
-            'addition' => array_sum($totalAddition), 
-            'subtraction' => array_sum($totalSubtraction)]);
+            'data'        => $result, 
+            'addition'    => $total['addition'], 
+            'subtraction' => $total['subtraction']
+            ]);
     }
 
     /**
     *
-    * Get date fomat
+    * Get all report by name
+    *
+    * @param $request Illuminate\Http\Request
+    * @param $name string
+    *
+    * @return array 
     *
     */
-    public function getDateFormat($timestamp = null, $default)
+    public function reportByName(Request $request, $name)
     {
-        $result = $default;
-
-        if ($timestamp !== null) {
-            $result = date("Y-m-d H:i:s", $timestamp);
+        $reportRepository = new ReportRepository();
+        
+        try {
+           $result = $reportRepository->byName($name);
+        } catch (PDOException $e) {
+            //@todo logger 
+        } catch (Exception $e) {
+            //@todo logger
         }
-        return $result;
+
+        if (count($result) === 0 ) {
+            abort(404);
+        }
+
+        $total = $this->getTotalActions($result); 
+        
+        return view('report', [
+            'data'        => $result, 
+            'addition'    => $total['addition'], 
+            'subtraction' => $total['subtraction']
+            ]);
+    } 
+
+    /**
+    *
+    * Get report by name and data from
+    *
+    * @param $request Illuminate\Http\Request
+    * @param $name string
+    * @param $dataFrom string
+    *
+    */
+    public function reportByDataFrom(Request $request, $name, $dataFrom)
+    {
+        $reportRepository = new ReportRepository();
+        
+        try {
+           $result = $reportRepository->byDataFrom($name, $dataFrom);
+        } catch (PDOException $e) {
+            //@todo logger 
+        } catch (Exception $e) {
+            //@todo logger
+        }
+
+        if (count($result) === 0 ) {
+            abort(404);
+        }
+
+        $total = $this->getTotalActions($result); 
+        
+        return view('report', [
+            'data'        => $result, 
+            'addition'    => $total['addition'], 
+            'subtraction' => $total['subtraction']
+            ]);
+    } 
+
+   /**
+    *
+    * Get report by name and data to
+    *
+    * @param $request Illuminate\Http\Request
+    * @param $name string
+    * @param $dataFrom string
+    *
+    */
+    public function reportByDataTo(Request $request, $name, $dataTo)
+    {
+        $reportRepository = new ReportRepository();
+        
+        try {
+           $result = $reportRepository->byDataTo($name, $dataTo);
+        } catch (PDOException $e) {
+            //@todo logger 
+        } catch (Exception $e) {
+            //@todo logger
+        }
+
+        if (count($result) === 0 ) {
+            abort(404);
+        }
+
+        $total = $this->getTotalActions($result); 
+        
+        return view('report', [
+            'data'        => $result, 
+            'addition'    => $total['addition'], 
+            'subtraction' => $total['subtraction']
+            ]);
+    } 
+
+    /**
+    *
+    * Get total action
+    *
+    * @param $result array
+    *
+    * @return array
+    *
+    */
+    public function getTotalActions($result)
+    {
+        $totalSubtraction = [];
+        $totalAddition    = []; 
+
+        foreach ($result as $value) {
+            if ($value['action'] === 'addition') {
+                array_unshift($totalAddition, $value['value']);
+            }
+            if ($value['action'] === 'subtraction') {
+                array_unshift($totalSubtraction, $value['value']);
+            }
+            return ['addition' => array_sum($totalAddition), 'subtraction' => array_sum($totalSubtraction)];
+        }
     }
 }
