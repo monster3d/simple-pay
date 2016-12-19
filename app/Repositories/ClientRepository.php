@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
+use App\Models\ClientContarct;
 use \PDO;
 use \Exception;
 
@@ -17,7 +18,7 @@ class ClientRepository {
     * @return App/Models/ClientContract
     *
     */
-    public function add($model) 
+    public function add(ClientContarct $model) 
     {
         $pdo    = DB::getPdo();
         $status = null;
@@ -59,7 +60,7 @@ class ClientRepository {
     * @return App/Models/ClientContract
     *
     */
-    public function get($model)
+    public function get(ClientContract $model)
     {
         $pdo = DB::getPdo();
 
@@ -95,7 +96,7 @@ class ClientRepository {
     * @return App/Models/ClientContract
     *
     */
-    public function fillUp($model)
+    public function fillUp(ClientContract $model)
     {
         $pdo = DB::getPdo();
 

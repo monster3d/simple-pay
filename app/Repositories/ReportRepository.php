@@ -13,13 +13,15 @@ class ReportRepository {
     *
     * Get report (all data)
     *
+    * @return array
+    *
     */
     public function all()
     {
         $pdo = DB::getPdo();
 
         $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
-        `actions`.`alias` AS `action`, `logs`.`value`, `logs`.`action_date` 
+        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value`, `logs`.`action_date` 
                 FROM `logs` 
                 LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
                 LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
@@ -50,7 +52,7 @@ class ReportRepository {
         $pdo = DB::getPdo();
 
         $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
-        `actions`.`alias` AS `action`, `logs`.`value`, `logs`.`action_date` 
+        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value`, `logs`.`action_date` 
                 FROM `logs` 
                 LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
                 LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
@@ -80,14 +82,14 @@ class ReportRepository {
     * @return array
     *
     */
-    public function byDataFrom($name, $fromDate)
+    public function byDateFrom($name, $fromDate)
     {
         $pdo = DB::getPdo();
 
         $date = 
 
         $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
-        `actions`.`alias` AS `action`, `logs`.`value`, `logs`.`action_date` 
+        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value`, `logs`.`action_date` 
                 FROM `logs` 
                 LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
                 LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
@@ -119,14 +121,14 @@ class ReportRepository {
     * @return array
     *
     */
-    public function byDataTo($name, $toDate)
+    public function byDateTo($name, $toDate)
     {
         $pdo = DB::getPdo();
 
         $date = 
 
         $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
-        `actions`.`alias` AS `action`, `logs`.`value`, `logs`.`action_date` 
+        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value` , `logs`.`action_date` 
                 FROM `logs` 
                 LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
                 LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
@@ -137,6 +139,46 @@ class ReportRepository {
 
         $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true]);
         $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmt->bindParam(':date_to', $toDate, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($result === false) {
+            throw new Exception('Error, not execute search client');
+        }
+
+        return $result;
+    }
+
+     /**
+    *
+    * Get report by name and between date
+    *
+    * @param $name string
+    * @param $toDate string
+    * 
+    * @return array
+    *
+    */
+    public function byBetweenDate($name, $fromDate, $toDate)
+    {
+        $pdo = DB::getPdo();
+
+        $date = 
+
+        $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
+        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value`, `logs`.`action_date` 
+                FROM `logs` 
+                LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
+                LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
+                LEFT JOIN `actions` ON `logs`.`action_id` = `actions`.`id`
+                LEFT JOIN `currencys` ON `wallets`.`currency_id` = `currencys`.`id`
+                WHERE `clients`.`name` LIKE :name
+                AND (`logs`.`action_date` BETWEEN :date_from AND :date_to)";
+
+        $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true]);
+        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmt->bindParam(':date_from', $fromDate, PDO::PARAM_STR);
         $stmt->bindParam(':date_to', $toDate, PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

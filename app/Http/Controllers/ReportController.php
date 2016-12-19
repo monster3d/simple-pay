@@ -91,12 +91,12 @@ class ReportController extends Controller
     * @param $dataFrom string
     *
     */
-    public function reportByDataFrom(Request $request, $name, $dataFrom)
+    public function reportByDateFrom(Request $request, $name, $dataFrom)
     {
         $reportRepository = new ReportRepository();
         
         try {
-           $result = $reportRepository->byDataFrom($name, $dataFrom);
+           $result = $reportRepository->byDateFrom($name, $dataFrom);
         } catch (PDOException $e) {
             //@todo logger 
         } catch (Exception $e) {
@@ -122,15 +122,15 @@ class ReportController extends Controller
     *
     * @param $request Illuminate\Http\Request
     * @param $name string
-    * @param $dataFrom string
+    * @param $dataTo string
     *
     */
-    public function reportByDataTo(Request $request, $name, $dataTo)
+    public function reportByDateTo(Request $request, $name, $dataTo)
     {
         $reportRepository = new ReportRepository();
         
         try {
-           $result = $reportRepository->byDataTo($name, $dataTo);
+           $result = $reportRepository->byDateTo($name, $dataTo);
         } catch (PDOException $e) {
             //@todo logger 
         } catch (Exception $e) {
@@ -148,7 +148,42 @@ class ReportController extends Controller
             'addition'    => $total['addition'], 
             'subtraction' => $total['subtraction']
             ]);
-    } 
+    }
+
+    /**
+    *
+    * Get report by name and data to
+    *
+    * @param $request Illuminate\Http\Request
+    * @param $name string
+    * @param $dateFrom string
+    * @param $dateTo string
+    *
+    */
+    public function reportByBetweenDate(Request $request, $name, $dateFrom, $dateTo)
+    {
+        $reportRepository = new ReportRepository();
+        
+        try {
+           $result = $reportRepository->byBetweenDate($name, $dateFrom, $dateTo);
+        } catch (PDOException $e) {
+            //@todo logger 
+        } catch (Exception $e) {
+            //@todo logger
+        }
+
+        if (count($result) === 0 ) {
+            abort(404);
+        }
+
+        $total = $this->getTotalActions($result); 
+        
+        return view('report', [
+            'data'        => $result, 
+            'addition'    => $total['addition'], 
+            'subtraction' => $total['subtraction']
+            ]);
+    }  
 
     /**
     *

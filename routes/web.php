@@ -28,9 +28,14 @@ $app->group(['prefix' => 'api'], function() use($app) {
     $app->post('client/fillup', 'ClientController@fillUpAmount');
 
     /*
-    * Route fro transfer
+    * Route for transfer
     */
     $app->post('transfer', 'TransferController@transfer');
+
+    /*
+    * Route for upload currency rate
+    */
+    $app->post('rate/usd/add', 'RateController@add');
 });
 
 
@@ -49,15 +54,15 @@ $app->group(['prefix' => 'report'], function() use($app) {
     /*
     * Route get report by data from
     */
-    $app->get('client/name/{name}/from/{fromData}', 'ReportController@reportByDataFrom');
+    $app->get('client/name/{name}/from/{from_date}', 'ReportController@reportByDateFrom');
 
     /*
     * Route get report by data to
     */
-    $app->get('client/name/{name}/to/{toDate}', 'ReportController@reportByDataTo');
+    $app->get('client/name/{name}/to/{to_date}', 'ReportController@reportByDateTo');
 
     /*
     * Route get report by between data
     */
-    $app->get('client/name/{name}/from/{fromData}/to/{toData}', 'ReportController@reportByBetweenData');
+    $app->get('client/name/{name}/from/{from_date}/to/{to_date}', 'ReportController@reportByBetweenDate');
 });
