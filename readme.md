@@ -131,13 +131,13 @@ environments:
 ```
 Проверим.
 ```sh
-    $ vendor/bin/phinx status -e develompent
+    $ vendor/bin/phinx status -e production
 ```
 Если все нормально, то должны увидить что статусы всех миграций down
 
 Ну, запустим миграции.
 ```sh
-    $ vendor/bin/phinx migrate -e development
+    $ vendor/bin/phinx migrate -e production
 ```
 Если ничего по дороге не сломалось, значит круто, продолжаем.
 Теперь попробуем запустить приложение.
