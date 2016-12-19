@@ -21,12 +21,15 @@ class ReportRepository {
         $pdo = DB::getPdo();
 
         $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
-        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value`, `logs`.`action_date` 
+                        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `sum_value`, `logs`.`action_date`,
+                         IF(`rate`.`date` IS NOT NULL, ((`logs`.`value` / `rate`.`value`)), null) AS `curs` 
                 FROM `logs` 
                 LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
                 LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
                 LEFT JOIN `actions` ON `logs`.`action_id` = `actions`.`id`
-                LEFT JOIN `currencys` ON `wallets`.`currency_id` = `currencys`.`id`";
+                LEFT JOIN `currencys` ON `wallets`.`currency_id` = `currencys`.`id`
+                LEFT JOIN `exchange_rates_to_usd` AS `rate` ON `currencys`.`id` IN(`rate`.`currency_id`)
+                AND `rate`.`date` = CURDATE()";
     
         $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true]);
         $stmt->execute();
@@ -52,12 +55,15 @@ class ReportRepository {
         $pdo = DB::getPdo();
 
         $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
-        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value`, `logs`.`action_date` 
+                        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `sum_value`, `logs`.`action_date`,
+                         IF(`rate`.`date` IS NOT NULL, ((`logs`.`value` / `rate`.`value`)), null) AS `curs`
                 FROM `logs` 
                 LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
                 LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
                 LEFT JOIN `actions` ON `logs`.`action_id` = `actions`.`id`
                 LEFT JOIN `currencys` ON `wallets`.`currency_id` = `currencys`.`id`
+                LEFT JOIN `exchange_rates_to_usd` AS `rate` ON `currencys`.`id` IN(`rate`.`currency_id`)
+                AND `rate`.`date` = CURDATE()
                 WHERE `clients`.`name` LIKE :name";
 
         $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true]);
@@ -86,15 +92,16 @@ class ReportRepository {
     {
         $pdo = DB::getPdo();
 
-        $date = 
-
         $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
-        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value`, `logs`.`action_date` 
+                        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `sum_value`, `logs`.`action_date`,
+                         IF(`rate`.`date` IS NOT NULL, ((`logs`.`value` / `rate`.`value`)), null) AS `curs` 
                 FROM `logs` 
                 LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
                 LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
                 LEFT JOIN `actions` ON `logs`.`action_id` = `actions`.`id`
                 LEFT JOIN `currencys` ON `wallets`.`currency_id` = `currencys`.`id`
+                LEFT JOIN `exchange_rates_to_usd` AS `rate` ON `currencys`.`id` IN(`rate`.`currency_id`)
+                AND `rate`.`date` = CURDATE()
                 WHERE `clients`.`name` LIKE :name
                 AND `logs`.`action_date` > :date_from";
 
@@ -125,15 +132,16 @@ class ReportRepository {
     {
         $pdo = DB::getPdo();
 
-        $date = 
-
         $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
-        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value` , `logs`.`action_date` 
+                        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `sum_value`, `logs`.`action_date`,
+                         IF(`rate`.`date` IS NOT NULL, ((`logs`.`value` / `rate`.`value`)), null) AS `curs`
                 FROM `logs` 
                 LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
                 LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
                 LEFT JOIN `actions` ON `logs`.`action_id` = `actions`.`id`
                 LEFT JOIN `currencys` ON `wallets`.`currency_id` = `currencys`.`id`
+                LEFT JOIN `exchange_rates_to_usd` AS `rate` ON `currencys`.`id` IN(`rate`.`currency_id`)
+                AND `rate`.`date` = CURDATE()
                 WHERE `clients`.`name` LIKE :name
                 AND `logs`.`action_date` < :date_to";
 
@@ -164,15 +172,16 @@ class ReportRepository {
     {
         $pdo = DB::getPdo();
 
-        $date = 
-
         $sql = "SELECT `clients`.`name`, `clients`.`uid`, `currencys`.`alias` AS `currency`, `clients`.`country`, 
-        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `value`, `logs`.`action_date` 
+                        `actions`.`alias` AS `action`, (`logs`.`value` / 100) AS `sum_value`, `logs`.`action_date`,
+                         IF(`rate`.`date` IS NOT NULL, ((`logs`.`value` / `rate`.`value`)), null) AS `curs` 
                 FROM `logs` 
                 LEFT JOIN `clients` ON `logs`.`client_id` = `clients`.`id`
                 LEFT JOIN `wallets` ON `logs`.`client_id` = `wallets`.`client_id`
                 LEFT JOIN `actions` ON `logs`.`action_id` = `actions`.`id`
                 LEFT JOIN `currencys` ON `wallets`.`currency_id` = `currencys`.`id`
+                LEFT JOIN `exchange_rates_to_usd` AS `rate` ON `currencys`.`id` IN(`rate`.`currency_id`)
+                AND `rate`.`date` = CURDATE()
                 WHERE `clients`.`name` LIKE :name
                 AND (`logs`.`action_date` BETWEEN :date_from AND :date_to)";
 
