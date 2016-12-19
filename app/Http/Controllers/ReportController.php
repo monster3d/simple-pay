@@ -41,9 +41,8 @@ class ReportController extends Controller
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'        => $result, 
-            'addition'    => $total['addition'], 
-            'subtraction' => $total['subtraction']
+            'data'  => $result, 
+            'total' => $total 
             ]);
     }
 
@@ -76,9 +75,8 @@ class ReportController extends Controller
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'        => $result, 
-            'addition'    => $total['addition'], 
-            'subtraction' => $total['subtraction']
+            'data'  => $result, 
+            'total' => $total
             ]);
     } 
 
@@ -110,9 +108,8 @@ class ReportController extends Controller
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'        => $result, 
-            'addition'    => $total['addition'], 
-            'subtraction' => $total['subtraction']
+            'data'  => $result, 
+            'total' => $total
             ]);
     } 
 
@@ -144,10 +141,9 @@ class ReportController extends Controller
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'        => $result, 
-            'addition'    => $total['addition'], 
-            'subtraction' => $total['subtraction']
-            ]);
+            'data'  => $result, 
+            'total' => $total 
+        ]);
     }
 
     /**
@@ -179,9 +175,8 @@ class ReportController extends Controller
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'        => $result, 
-            'addition'    => $total['addition'], 
-            'subtraction' => $total['subtraction']
+            'data'  => $result, 
+            'total' => $total
             ]);
     }  
 
@@ -196,17 +191,26 @@ class ReportController extends Controller
     */
     public function getTotalActions($result)
     {
-        $totalSubtraction = [];
-        $totalAddition    = []; 
+        $totalSubtraction     = [];
+        $totalAddition        = []; 
+        $totalCursAddition    = [];
+        $totalCursSubtraction = [];
 
         foreach ($result as $value) {
             if ($value['action'] === 'addition') {
-                array_unshift($totalAddition, $value['value']);
+                array_unshift($totalAddition, $value['sum_value']);
+                array_unshift($totalCursAddition, $value['curs']);
             }
             if ($value['action'] === 'subtraction') {
-                array_unshift($totalSubtraction, $value['value']);
+                array_unshift($totalSubtraction, $value['sum_value']);
+                array_unshift($totalCursSubtraction, $value['curs']);
             }
         }
-        return ['addition' => array_sum($totalAddition), 'subtraction' => array_sum($totalSubtraction)];
+        return [
+            'addition'         => array_sum($totalAddition), 
+            'subtraction'      => array_sum($totalSubtraction),
+            'curs_subtraction' => array_sum($totalCursSubtraction),
+            'curs_addition'    => array_sum($totalCursAddition)
+       ];
     }
 }
