@@ -27,20 +27,29 @@ background: #FAFAFA;
 text-align: center;
 }
 
+.title {
+    font-weight: bold;
+}
+
+.align {
+    text-align: left;
+}
+
 tr:nth-child(even) td { background: #F1F1F1; }
 tr:nth-child(odd) td { background: #FEFEFE; }
 tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
 </style>
 
     <body>
-        <table style=" width: 640px;">
+        <table>
             <tr>
-                <td>Client Name</td>
-                <td>Client Purse</td>
-                <td>Client Country</td>
-                <td>Actions</td>
-                <td>Value</td>
-                <td>Date Actions</td>
+                <td class="title">Client Name</td>
+                <td class="title">Client Purse</td>
+                <td class="title">Client Currency</td>
+                <td class="title">Client Country</td>
+                <td class="title">Actions</td>
+                <td class="title">Value</td>
+                <td class="title">Date Actions</td>
             </tr>
             <?php
                 foreach($data as $client) {
@@ -51,14 +60,15 @@ tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
                             echo "</td>";
                       
                         }
+                    echo "</tr>";
                 }
                ?>
                <tr>
-                   <td>Total addition: </td>
+                   <td class="title align">Total addition: </td>
                    <td> <?php echo $addition; ?></td>
                </tr>
                <tr>
-                    <td>Total subtraction: </td>
+                    <td class="title align">Total subtraction: </td>
                     <td> <?php echo $subtraction; ?></td>
                </tr>
         </table>
