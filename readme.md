@@ -314,3 +314,7 @@ environments:
         error:
             http status code
 ```
+
+Схема базы
+
+[![Screenshot_2016-12-15_22-27-10.png](https://s30.postimg.org/3ln8w13ep/Screenshot_2016_12_15_22_27_10.png)](https://postimg.org/image/5dg7qxmrh/)
