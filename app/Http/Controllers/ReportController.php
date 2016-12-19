@@ -206,7 +206,7 @@ class ReportController extends Controller
             if ($value['action'] === 'subtraction') {
                 array_unshift($totalSubtraction, $value['value']);
             }
-            return ['addition' => array_sum($totalAddition), 'subtraction' => array_sum($totalSubtraction)];
         }
+        return ['addition' => array_sum($totalAddition), 'subtraction' => array_sum($totalSubtraction)];
     }
 }
