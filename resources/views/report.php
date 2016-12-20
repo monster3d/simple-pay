@@ -42,6 +42,11 @@ td:first-child {
     border-left: 2px solid #56433D;
 }
 
+.link {
+    border: 2px solid #56433D;
+    padding: 3px;
+    text-decoration: none; 
+}
 
 </style>
 
@@ -85,5 +90,8 @@ td:first-child {
                    <td> <?php echo $total['curs_subtraction']; ?></td> 
                </tr>
         </table>
+        <div>
+            <a class="link" href=<?php echo $redirect ?>>Get CSV</a>
+        </div>
     </body>
 </html>
