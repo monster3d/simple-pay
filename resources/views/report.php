@@ -2,55 +2,60 @@
 <html>
 
 <style>
-
 table {
-color: #333;
-font-family: Helvetica, Arial, sans-serif;
-width: 640px;
-border-collapse:
-collapse; border-spacing: 0;
-}
+    border-spacing: 0 10px;
+    font-family: 'Open Sans', sans-serif;
 
-td, th {
-border: 1px solid transparent; /* No more visible border */
-height: 30px;
-transition: all 0.3s; /* Simple transition for hover effect */
 }
 
 th {
-background: #DFDFDF; /* Darken header a bit */
-font-weight: bold;
+    padding: 10px 20px;
+    background: #56433D;
+    color: #F9C941;
+    border-right: 2px solid; 
+    font-size: 0.9em;
 }
 
-td {
-background: #FAFAFA;
-text-align: center;
-}
-
-.title {
-    font-weight: bold;
-}
-
-.align {
+th:first-child {
     text-align: left;
 }
 
-tr:nth-child(even) td { background: #F1F1F1; }
-tr:nth-child(odd) td { background: #FEFEFE; }
-tr td:hover { background: #666; color: #FFF; }
+th:last-child {
+    border-right: none;
+}
+
+td {
+    vertical-align: middle;
+    padding: 10px;
+    font-size: 14px;
+    text-align: center;
+    border-top: 2px solid #56433D;
+    border-bottom: 2px solid #56433D;
+    border-right: 2px solid #56433D;
+}
+
+tr:first-child {
+    font-weight: bold;
+
+}
+td:first-child {
+    border-left: 2px solid #56433D;
+}
+
+
 </style>
 
     <body>
         <table>
             <tr>
-                <td class="title">Client Name</td>
-                <td class="title">Client Purse</td>
-                <td class="title">Client Currency</td>
-                <td class="title">Client Country</td>
-                <td class="title">Actions</td>
-                <td class="title">Value</td>
-                <td class="title">Date Actions</td>
-                <td class="title">USD</td>
+                <td>Client Name</td>
+                <td>Client Purse</td>
+                <td>Client Currency</td>
+                <td>Client Country</td>
+                <td>Actions</td>
+                <td>Value</td>
+                <td>Date Actions</td>
+                <td>USD</td>
             </tr>
             <?php
                 foreach($data as $client) {
@@ -64,17 +69,20 @@ tr td:hover { background: #666; color: #FFF; }
                     echo "</tr>";
                 }
                ?>
+               </table>
+               <br>
+               <table>
                <tr>
-                   <td class="title align">Total addition: </td>
+                   <td>Total addition</td>
+                   <td>Total subtraction</td>
+                   <td>USD addition</td>
+                   <td>USD subtraction</td> 
+                </tr>
+                <tr>
                    <td> <?php echo $total['addition']; ?></td>
-                   <td class="title align">USD</td>
+                   <td> <?php echo $total['subtraction']; ?></td>
                    <td> <?php echo $total['curs_addition']; ?></td>
-               </tr>
-               <tr>
-                    <td class="title align">Total subtraction: </td>
-                    <td> <?php echo $total['subtraction']; ?></td>
-                    <td class=" title align">USD</td>
-                    <td> <?php echo $total['curs_subtraction']; ?></td> 
+                   <td> <?php echo $total['curs_subtraction']; ?></td> 
                </tr>
         </table>
     </body>
