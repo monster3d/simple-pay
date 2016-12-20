@@ -18,12 +18,14 @@ class TransferRepository {
     */
     public function clientToClient(TransferContract $model)
     {
-        $pdo = DB::getPdo();
-        $status  = null;
-        $result  = false;                
-        $fromUid = $model->getFromUid();
-        $toUid   = $model->getToUid();
-        $sum     = $model->toSmallAmount($model->getSum());
+        $pdo          = DB::getPdo();
+        $status       = null;
+        $result       = false;                
+        $fromUid      = $model->getFromUid();
+        $toUid        = $model->getToUid();
+        $sum          = $model->toSmallAmount($model->getSum());
+        $fromCurrency = strtoupper($model->getFromCurrency());
+        $toCurrency   = strtoupper($model->getToCurrency());
 
         $sql  = "SELECT get_amount(:uid) AS `amount`";
         $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
@@ -39,11 +41,13 @@ class TransferRepository {
 
         $result = false;
 
-        $sql  = "CALL pay_to_pay(:from_uid, :to_uid, :sum, :_status)";
+        $sql  = "CALL pay_to_pay(:from_uid, :to_uid, :from_currency, :to_currency, :sum, :_status)";
         $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
         
         $stmt->bindParam(':from_uid', $fromUid, PDO::PARAM_INT);
         $stmt->bindParam(':to_uid', $toUid, PDO::PARAM_INT);
+        $stmt->bindParam(':from_currency', $fromCurrency, PDO::PARAM_STR);
+        $stmt->bindParam(':to_currency', $toCurrency, PDO::PARAM_STR);
         $stmt->bindParam(':sum', $sum, PDO::PARAM_INT);
         $stmt->bindParam(':_status', $status, PDO::PARAM_INT|PDO::PARAM_INPUT_OUTPUT, 4000);
         $stmt->execute();
@@ -53,6 +57,8 @@ class TransferRepository {
         if ($result === false) {
             throw new Exception('Transfer error');
         }
+
+        $model->setStatus($result['_status']);
         return $model;
     }
 }
