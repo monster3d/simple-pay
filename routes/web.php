@@ -39,7 +39,7 @@ $app->group(['prefix' => 'api'], function() use($app) {
 });
 
 
-$app->group(['prefix' => 'report'], function() use($app) {
+$app->group(['prefix' => 'report', 'middleware' => 'App\Http\Middleware\CleanerMiddleware'], function() use($app) {
     
     /*
     * Route get all reports 
