@@ -22,7 +22,8 @@ class TransferController extends Controller
     public function transfer(Request $request)
     {
         $response = [
-            'status' => 0
+            'status'  => 0,
+            'message' => ''
         ];
         $transferModel = new TransferModel($request->all());
         $transferRepository = new TransferRepository();
@@ -32,7 +33,8 @@ class TransferController extends Controller
             //@todo logger
         } catch (Exception $e) {
             //@tddo logger
-            $response['status'] = -1;
+            $response['status']  = -1;
+            $response['message'] = $e->getMessage();
         }
         return response()->json($response, 200);
     }
