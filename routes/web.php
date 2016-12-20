@@ -6,6 +6,16 @@
 |--------------------------------------------------------------------------
 */
 
+
+$app->group(['prefix' => 'web'], function() use($app) {
+  
+    /*
+    * Main page
+    */
+    $app->get('/', 'WebController@index');
+});
+
+
 $app->get('/version', function () use ($app) {
     return $app->version();
 });
