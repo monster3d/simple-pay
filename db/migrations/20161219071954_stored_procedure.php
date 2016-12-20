@@ -71,26 +71,32 @@ class StoredProcedure extends AbstractMigration
         $sql = "DROP PROCEDURE IF EXISTS `pay_to_pay`";
         $this->execute($sql);
 
-        $sql = "CREATE PROCEDURE `pay_to_pay`(IN `from_uid` INT(11), IN `to_uid` INT(11), IN `total_sum` INT(11), OUT `_status` INT(11))
-                    BEGIN
-                        DECLARE from_client_id INT;
-                        DECLARE to_client_id INT;
-                        DECLARE from_client_amount INT;
-                        SET SQL_SAFE_UPDATES = 0;
+        $sql = "CREATE PROCEDURE `pay_to_pay`(IN `from_uid` INT(11), IN `to_uid` INT(11), IN `from_currency` VARCHAR(10), IN `to_currency` VARCHAR(10), IN `total_sum` INT(11), IN `_status` INT(11))
+                BEGIN
+                	DECLARE from_client_id INT;
+                    DECLARE to_client_id INT;
+                    DECLARE from_client_amount INT;
+                    DECLARE from_currency_id INT;
+                    DECLARE to_currency_id INT;
+                    SET SQL_SAFE_UPDATES = 0;
     
-                        SELECT `id` INTO from_client_id FROM `clients` WHERE `uid` = from_uid;
-                        SELECT `id` INTO to_client_id FROM `clients` WHERE `uid` = to_uid;
-                    
+                    SELECT `id` INTO from_client_id FROM `clients` WHERE `uid` = from_uid;
+                    SELECT `id` INTO to_client_id FROM `clients` WHERE `uid` = to_uid;
+                    SELECT `id` INTO from_currency_id FROM `currencys` WHERE `alias` LIKE CONCAT('%', from_currency, '%');
+                    SELECT `id` INTO to_currency_id FROM `currencys` WHERE `alias` LIKE CONCAT('%', to_currency , '%');
+    
+                    IF from_currency_id = to_currency_id THEN
                         START TRANSACTION;
-                            UPDATE `wallets` SET `amount` = `amount` - total_sum WHERE `client_id` = from_client_id;
-                            UPDATE `wallets` SET `amount` = `amount` + total_sum WHERE `client_id` = to_client_id;
-    
+                            UPDATE `wallets` SET `amount` = `amount` - total_sum WHERE `client_id` = from_client_id AND `currency_id` = from_currency_id;
+                            UPDATE `wallets` SET `amount` = `amount` + total_sum WHERE `client_id` = to_client_id AND `currency_id` = to_currency_id;
                             INSERT INTO `logs` (`client_id`, `action_id`, `action_date`, `value`) VALUES(from_client_id, 2, NOW(), total_sum);
                             INSERT INTO `logs` (`client_id`, `action_id`, `action_date`, `value`) VALUES(to_client_id, 1, NOW(), total_sum);
                         COMMIT;
                         SET _status = 0;
-                        SELECT _status;
-                     END";
+                    ELSE SET _status = -2;
+                    END IF;  
+                    SELECT _status;
+                END;";
 
         $this->execute($sql);
 

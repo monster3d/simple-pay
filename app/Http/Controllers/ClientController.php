@@ -67,6 +67,8 @@ class ClientController extends Controller
     *
     * @return array
     *
+    * @todo need response code 404 if client not found
+    *
     */
     public function info(Request $request, $uid)
     {
@@ -80,7 +82,7 @@ class ClientController extends Controller
         } catch (Exception $e) {
             //@todo logger
         }
-        
+
         $response = [
             'status' => 0,
             'data' => [

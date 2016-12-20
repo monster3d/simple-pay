@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\ReportRepository;
+use \SplFileObject;
+use \Exception;
+use \PDOException;
 
 class ReportController extends Controller
 {
@@ -26,7 +29,7 @@ class ReportController extends Controller
     * @return array
     *
     */
-    public function report(Request $request)
+    public function report(Request $request, $format)
     {
         $reportRepository = new ReportRepository();
         
@@ -38,11 +41,18 @@ class ReportController extends Controller
             //@todo logger
         }
 
+        $this->isFound($result);
+
+        if ($format === 'csv') {
+            return $this->toCsv($result);
+        }
+
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'  => $result, 
-            'total' => $total 
+            'data'     => $result, 
+            'total'    => $total,
+            'redirect' => $this->getRedirectUrl($request, 'csv')
             ]);
     }
 
@@ -56,7 +66,7 @@ class ReportController extends Controller
     * @return array 
     *
     */
-    public function reportByName(Request $request, $name)
+    public function reportByName(Request $request, $name, $format)
     {
         $reportRepository = new ReportRepository();
         
@@ -68,15 +78,18 @@ class ReportController extends Controller
             //@todo logger
         }
 
-        if (count($result) === 0 ) {
-            abort(404);
-        }
+        $this->isFound($result);
+        
+        if ($format === 'csv') {
+            return $this->toCsv($result);
+        }        
 
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'  => $result, 
-            'total' => $total
+            'data'     => $result, 
+            'total'    => $total,
+            'redirect' => $this->getRedirectUrl($request, 'csv')
             ]);
     } 
 
@@ -89,7 +102,7 @@ class ReportController extends Controller
     * @param $dataFrom string
     *
     */
-    public function reportByDateFrom(Request $request, $name, $dataFrom)
+    public function reportByDateFrom(Request $request, $name, $dataFrom, $format)
     {
         $reportRepository = new ReportRepository();
         
@@ -100,16 +113,19 @@ class ReportController extends Controller
         } catch (Exception $e) {
             //@todo logger
         }
-
-        if (count($result) === 0 ) {
-            abort(404);
-        }
+        
+        $this->isFound($result);
+        
+        if ($format === 'csv') {
+            return $this->toCsv($result);
+        }        
 
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'  => $result, 
-            'total' => $total
+            'data'     => $result, 
+            'total'    => $total,
+            'redirect' => $this->getRedirectUrl($request, 'csv')
             ]);
     } 
 
@@ -122,7 +138,7 @@ class ReportController extends Controller
     * @param $dataTo string
     *
     */
-    public function reportByDateTo(Request $request, $name, $dataTo)
+    public function reportByDateTo(Request $request, $name, $dataTo, $format)
     {
         $reportRepository = new ReportRepository();
         
@@ -134,15 +150,18 @@ class ReportController extends Controller
             //@todo logger
         }
 
-        if (count($result) === 0 ) {
-            abort(404);
-        }
+        $this->isFound($result);
+
+        if ($format === 'csv') {
+            return $this->toCsv($result);
+        }    
 
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'  => $result, 
-            'total' => $total 
+            'data'     => $result, 
+            'total'    => $total,
+            'redirect' => $this->getRedirectUrl($request, 'csv') 
         ]);
     }
 
@@ -156,7 +175,7 @@ class ReportController extends Controller
     * @param $dateTo string
     *
     */
-    public function reportByBetweenDate(Request $request, $name, $dateFrom, $dateTo)
+    public function reportByBetweenDate(Request $request, $name, $dateFrom, $dateTo, $format)
     {
         $reportRepository = new ReportRepository();
         
@@ -168,18 +187,21 @@ class ReportController extends Controller
             //@todo logger
         }
 
-        if (count($result) === 0 ) {
-            abort(404);
-        }
+        $this->isFound($result);
+
+        if ($format === 'csv') {
+            return $this->toCsv($result);
+        }   
 
         $total = $this->getTotalActions($result); 
         
         return view('report', [
-            'data'  => $result, 
-            'total' => $total
+            'data'     => $result, 
+            'total'    => $total,
+            'redirect' => $this->getRedirectUrl($request, 'csv') 
             ]);
-    }  
-
+    }
+   
     /**
     *
     * Get total action
@@ -195,7 +217,7 @@ class ReportController extends Controller
         $totalAddition        = []; 
         $totalCursAddition    = [];
         $totalCursSubtraction = [];
-
+        
         foreach ($result as $value) {
             if ($value['action'] === 'addition') {
                 array_unshift($totalAddition, $value['sum_value']);
@@ -212,5 +234,55 @@ class ReportController extends Controller
             'curs_subtraction' => array_sum($totalCursSubtraction),
             'curs_addition'    => array_sum($totalCursAddition)
        ];
+    }
+
+    /**
+    *
+    * Prepare and send csv file
+    *
+    * @param $data array
+    *
+    */
+    public function toCsv(array $data)
+    {
+        $fileName = sprintf('%s.csv', date('m_d_y_H_i', time())); 
+        $csvPath  = sprintf("%s/app/%s", storage_path(), $fileName);
+        $resource = new SplFileObject($csvPath, 'w');
+
+        foreach($data as $value) {
+            $resource->fputcsv($value);
+        }
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => sprintf('attachment; filename=%s', $fileName),
+            'Expires'             => 0
+        ];
+        return response()->download($csvPath, $fileName, $headers);
+    }
+
+    /**
+    *
+    * Get report url by format
+    *
+    */
+    public function getRedirectUrl(Request $request, $to)
+    {
+        return sprintf('%s/%s', $request->url(), $to);
+    }
+
+    /**
+    *
+    * @todo implements ability response more one format
+    */
+    public function checkFormat($format)
+    {
+        switch ($format) {
+            case 'csv':
+            break;
+
+            case 'xml':
+            break;
+        }
     }
 }

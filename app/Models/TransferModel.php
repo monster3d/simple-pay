@@ -31,12 +31,41 @@ class TransferModel extends BaseModel implements TransferContract {
     */
     private $sum;
 
+    /**
+    *
+    * From currency alias
+    *
+    * @var string
+    *
+    */
+    private $formCurrency;
+
+    /**
+    *
+    * To currency alias
+    *
+    * @var string
+    *
+    */
+    private $toCurrency;
+
+    /**
+    *
+    * Transfer status
+    *
+    * @var int
+    *
+    */
+    private $status;
+
     public function __construct($data = null)
     {
         if ($data !== null) {
-            $this->fromUid = (int)$this->getValue($data, 'from_uid', 0);
-            $this->toUid   = (int)$this->getValue($data, 'to_uid', 0);
-            $this->sum     = (int)$this->getValue($data, 'sum', 0); 
+            $this->fromUid      = (int)$this->getValue($data, 'from_uid', 0);
+            $this->toUid        = (int)$this->getValue($data, 'to_uid', 0);
+            $this->fromCurrency = (string)$this->getValue($data, 'currency', '');
+            $this->toCurrency   = (string)$this->getValue($data, 'currency', '');
+            $this->sum          = (int)$this->getValue($data, 'sum', 0); 
         }
     }
 
@@ -66,6 +95,29 @@ class TransferModel extends BaseModel implements TransferContract {
 
     /**
     *
+    * Get from currency alias
+    *
+    * @return string
+    *
+    */
+    public function getFromCurrency()
+    {
+        return $this->fromCurrency;
+    }
+
+    /**
+    *
+    * Get to cyrrency alias
+    *
+    *
+    */
+    public function getToCurrency()
+    {
+        return $this->toCurrency;
+    }
+
+    /**
+    *
     * Get sum
     *
     * @return int
@@ -74,6 +126,18 @@ class TransferModel extends BaseModel implements TransferContract {
     public function getSum()
     {
         return $this->sum;
+    }
+
+    /**
+    *
+    * Get current transfer status
+    *
+    * @return int
+    *
+    */
+    public function getStatus()
+    {
+        return $this->status;
     }
 
     /**
@@ -108,6 +172,36 @@ class TransferModel extends BaseModel implements TransferContract {
 
     /**
     *
+    * Set from currency alias
+    *
+    * @param $fromCurrency string
+    *
+    * @return self
+    *
+    */
+    public function setFromCurrency($fromCurrency)
+    {
+        $this->fromCurrency = (string)$fromCurrency;
+        return $this;
+    }
+
+    /**
+    *
+    * Set to currency alias
+    *
+    * @param $toCurrency string
+    *
+    * @return self
+    *
+    */
+    public function setToCurrency($toCurrency)
+    {
+        $this->toCurrency = (string)$toCurrency;
+        return $this;
+    }
+
+    /**
+    *
     * Set sum
     *
     * @param $sum int
@@ -118,5 +212,21 @@ class TransferModel extends BaseModel implements TransferContract {
     public function setSum($sum)
     {
         $this->sum = (int)$sum;
+        return $this;
+    }
+
+    /**
+    *
+    * Set transfer status
+    *
+    * @param $status int
+    *
+    * @return self
+    *
+    */
+    public function setStatus($status)
+    {
+        $this->status = (int)$status;
+        return $this;
     }
 }
