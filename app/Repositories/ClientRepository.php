@@ -98,21 +98,26 @@ class ClientRepository {
     {
         $pdo = DB::getPdo();
 
-        $status = null;
-        $uid = $model->getUid();
-        $amount = $model->toSmallAmount($model->getAmount());
+        $status   = null;
+        $uid      = $model->getUid();
+        $amount   = $model->toSmallAmount($model->getAmount());
+        $currency = $model->getCurrency();
 
-        $sql = "CALL fill_up(:uid, :amount)";
+        $sql = "CALL fill_up(:uid, :amount, :currency)";
         $stmt = $pdo->prepare($sql, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
         
         $stmt->bindParam(':uid', $uid, PDO::PARAM_INT);
         $stmt->bindParam(':amount', $amount, PDO::PARAM_INT);
+        $stmt->bindParam(':currency', $currency, PDO::PARAM_STR);
         $stmt->execute();
         
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result === false) {
             throw new Exception(sprintf('It is impossible to fill up the purse UID: %d', $uid));
         }
+
+        $model->setStatus($result['_status']);
+
         return $model; 
     }
 }
