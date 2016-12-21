@@ -59,7 +59,7 @@ class StoredProcedure extends AbstractMigration
                         SELECT `id` INTO client_currency_id FROM `currencys` WHERE `alias` LIKE CONCAT('%', client_currency, '%');
                         IF client_currency_id <> 0 THEN
     	                    SELECT `id` INTO log_client_id FROM `clients` WHERE `uid` = client_uid;
-                            UPDATE `wallets` SET `amount` = `amount` + client_amount WHERE `client_id` = log_client_id;    
+                            UPDATE `wallets` SET `amount` = `amount` + client_amount WHERE `client_id` = log_client_id AND `currency_id` = client_currency_id;    
                             INSERT INTO `logs` (`client_id`, `action_id`, `action_date`, `value`) VALUES(log_client_id, 1, NOW(), client_amount);
                             COMMIT;
                         ELSE SET _status = -2;
