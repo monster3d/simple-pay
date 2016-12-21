@@ -76,6 +76,20 @@ class ClientModel extends BaseModel implements ClientContract {
     */
     private $lastActivity;
 
+    /**
+    *
+    * Status
+    *
+    * @var int
+    *
+    */
+    private $status;
+    
+    /**
+    *
+    * @param $data array
+    *
+    */
     public function __construct($data = null)
     {
         if ($data !== null) {
@@ -185,6 +199,18 @@ class ClientModel extends BaseModel implements ClientContract {
 
     /**
     *
+    * Get currency status
+    *
+    * @return int
+    *
+    */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+    *
     * Set client name
     *
     * @param $name string
@@ -290,12 +316,27 @@ class ClientModel extends BaseModel implements ClientContract {
 
     /**
     *
+    * Set status
+    *
+    * @param int $status
+    *
+    * @return self
+    *
+    */
+    public function setStatus($status)
+    {
+        $this->status = (int)$status;
+        return $this;
+    }
+
+    /**
+    *
     * Check status model
     * 
     * @return bool
     *
     */
-    public function getStatus()
+    public function checkStatus()
     {
         if (empty($this->name)) {
             return false;
