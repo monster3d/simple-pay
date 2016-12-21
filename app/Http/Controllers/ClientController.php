@@ -113,17 +113,21 @@ class ClientController extends Controller
         $clientModel = new ClientModel($request->all());
         $clientRepository = new ClientRepository();
         $response = [
-            'status' => 0
+            'status'  => 0,
+            'message' => ''
         ];
 
         try {
-            $clientRepository->fillUp($clientModel);
+           $clientModel = $clientRepository->fillUp($clientModel);
+           $response['status'] = $clientModel->getStatus(); 
         } catch (PDOException $e) {
             //@todo logger
         } catch (Exception $e) {
             //@todo logger
-            $response['status'] = -1;
+            $response['status']  = -1;
+            $response['message'] = $e->getMessage();
         }
+               
         return response()->json($response, 201);
     
     }
