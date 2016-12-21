@@ -28,7 +28,8 @@ class TransferController extends Controller
         $transferModel = new TransferModel($request->all());
         $transferRepository = new TransferRepository();
         try {
-            $transferRepository->clientToClient($transferModel);
+            $transferModel = $transferRepository->clientToClient($transferModel);
+            $response['status'] = $transferModel->getStatus();
         } catch (PDOException $e) {
             //@todo logger
         } catch (Exception $e) {
