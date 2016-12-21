@@ -114,7 +114,7 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1482247292793,
+			"time": 1482338944279,
 			"name": "Transfer money client to client",
 			"description": "",
 			"collectionId": "aee59795-9b12-b60b-6a91-a56e646cb32d",
@@ -149,7 +149,7 @@
 			"data": [
 				{
 					"key": "uid",
-					"value": "347322288",
+					"value": "54808815",
 					"type": "text",
 					"enabled": true
 				},
@@ -158,13 +158,19 @@
 					"value": "350000",
 					"type": "text",
 					"enabled": true
+				},
+				{
+					"key": "currency",
+					"value": "UZB",
+					"type": "text",
+					"enabled": true
 				}
 			],
 			"dataMode": "params",
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1482215212941,
+			"time": 1482338947228,
 			"name": "fill up purse",
 			"description": "",
 			"collectionId": "aee59795-9b12-b60b-6a91-a56e646cb32d",
