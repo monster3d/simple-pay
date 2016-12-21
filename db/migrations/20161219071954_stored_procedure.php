@@ -50,20 +50,21 @@ class StoredProcedure extends AbstractMigration
         $sql = "DROP PROCEDURE IF EXISTS `fill_up`";
         $this->execute($sql);
 
-        $sql = "CREATE PROCEDURE `fill_up`(IN `client_uid` INT(11), IN `client_amount` INT(11))
+        $sql = "CREATE PROCEDURE `fill_up`(IN `client_uid` INT(11), IN `client_amount` INT(11), IN `client_currency` VARCHAR(10))
                     BEGIN
 	                    DECLARE log_client_id INT;
-                        DECLARE _status INT DEFAULT 1;
+                        DECLARE client_currency_id INT DEFAULT 0;
+                        DECLARE _status INT DEFAULT 0;
 	                    SET SQL_SAFE_UPDATES = 0;
-
-	                    SELECT `id` INTO log_client_id FROM `clients` WHERE `uid` = client_uid;
-
-                        UPDATE `wallets` SET `amount` = `amount` + client_amount WHERE `client_id` = log_client_id;    
-    
-                        INSERT INTO `logs` (`client_id`, `action_id`, `action_date`, `value`) VALUES(log_client_id, 1, NOW(), client_amount);
-                    COMMIT;
-                    SET _status = 0;
-                    SELECT _status;
+                        SELECT `id` INTO client_currency_id FROM `currencys` WHERE `alias` LIKE CONCAT('%', client_currency, '%');
+                        IF client_currency_id <> 0 THEN
+    	                    SELECT `id` INTO log_client_id FROM `clients` WHERE `uid` = client_uid;
+                            UPDATE `wallets` SET `amount` = `amount` + client_amount WHERE `client_id` = log_client_id;    
+                            INSERT INTO `logs` (`client_id`, `action_id`, `action_date`, `value`) VALUES(log_client_id, 1, NOW(), client_amount);
+                            COMMIT;
+                        ELSE SET _status = -2;
+                        END IF;
+                        SELECT _status;
                     END;";
 
         $this->execute($sql);
